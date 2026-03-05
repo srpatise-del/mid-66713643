@@ -4,7 +4,8 @@ include 'condb.php';
 header('Content-Type: application/json');
 
 $name = $_POST['name'];
-$price = $_POST['price'];
+$address = $_POST['address'];
+$province = $_POST['province'];
 $description = $_POST['description'];
 
 ////////////////////////////////////////////////////////////
@@ -35,12 +36,13 @@ if (isset($_FILES['image'])) {
 try {
 
     $stmt = $conn->prepare("
-        INSERT INTO products (name, price, description, image)
-        VALUES (:name, :price, :description, :image)
+        INSERT INTO places (name, address, province, description, image)
+        VALUES (:name, :address, :province, :description, :image)
     ");
 
     $stmt->bindParam(":name", $name);
-    $stmt->bindParam(":price", $price);
+    $stmt->bindParam(":address", $address);
+    $stmt->bindParam(":province", $province);
     $stmt->bindParam(":description", $description);
     $stmt->bindParam(":image", $imageName);
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'add_product_page.dart';
-import 'edit_product_page.dart';
+import 'add_places_page.dart';
+import 'edit_places_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -12,7 +12,7 @@ void main() => runApp(const MyApp());
 //////////////////////////////////////////////////////////////
 
 const String baseUrl =
-    "http://127.0.0.1/flutter_product6/php_api/";
+    "http://127.0.0.1/mid-66713643/php_api/";
 
 //////////////////////////////////////////////////////////////
 // ✅ APP ROOT
@@ -24,48 +24,48 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: ProductList(),
+      home: placesList(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 //////////////////////////////////////////////////////////////
-// ✅ PRODUCT LIST PAGE
+// ✅ places LIST PAGE
 //////////////////////////////////////////////////////////////
 
-class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+class placesList extends StatefulWidget {
+  const placesList({super.key});
 
   @override
-  State<ProductList> createState() => _ProductListState();
+  State<placesList> createState() => _placesListState();
 }
 
-class _ProductListState extends State<ProductList> {
-  List products = [];
-  List filteredProducts = [];
+class _placesListState extends State<placesList> {
+  List places = [];
+  List filteredplaces = [];
 
   final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+    fetchplaces();
   }
 
   ////////////////////////////////////////////////////////////
   // ✅ FETCH DATA
   ////////////////////////////////////////////////////////////
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchplaces() async {
     try {
       final response =
           await http.get(Uri.parse("${baseUrl}show_data.php"));
 
       if (response.statusCode == 200) {
         setState(() {
-          products = json.decode(response.body);
-          filteredProducts = products;
+          places = json.decode(response.body);
+          filteredplaces = places;
         });
       }
     } catch (e) {
@@ -77,10 +77,10 @@ class _ProductListState extends State<ProductList> {
   // ✅ SEARCH
   ////////////////////////////////////////////////////////////
 
-  void filterProducts(String query) {
+  void filterplaces(String query) {
     setState(() {
-      filteredProducts = products.where((product) {
-        final name = product['name']?.toLowerCase() ?? '';
+      filteredplaces = places.where((places) {
+        final name = places['name']?.toLowerCase() ?? '';
         return name.contains(query.toLowerCase());
       }).toList();
     });
@@ -90,19 +90,19 @@ class _ProductListState extends State<ProductList> {
   // ✅ DELETE
   ////////////////////////////////////////////////////////////
 
-  Future<void> deleteProduct(int id) async {
+  Future<void> deleteplaces(int id) async {
     try {
       final response = await http.get(
-        Uri.parse("${baseUrl}delete_product.php?id=$id"),
+        Uri.parse("${baseUrl}delete_places.php?id=$id"),
       );
 
       final data = json.decode(response.body);
 
       if (data["success"] == true) {
-        fetchProducts();
+        fetchplaces();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("ลบสินค้าเรียบร้อย")),
+          const SnackBar(content: Text("ลบเรียบร้อย")),
         );
       }
     } catch (e) {
@@ -114,12 +114,12 @@ class _ProductListState extends State<ProductList> {
   // ✅ CONFIRM DELETE
   ////////////////////////////////////////////////////////////
 
-  void confirmDelete(dynamic product) {
+  void confirmDelete(dynamic places) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("ยืนยันการลบ"),
-        content: Text("ต้องการลบ ${product['name']} ?"),
+        content: Text("ต้องการลบ ${places['name']} ?"),
         actions: [
           TextButton(
             child: const Text("ยกเลิก"),
@@ -129,7 +129,7 @@ class _ProductListState extends State<ProductList> {
             child: const Text("ลบ"),
             onPressed: () {
               Navigator.pop(context);
-              deleteProduct(int.parse(product['id'].toString()));
+              deleteplaces(int.parse(places['id'].toString()));
             },
           ),
         ],
@@ -141,13 +141,13 @@ class _ProductListState extends State<ProductList> {
   // ✅ OPEN EDIT PAGE
   ////////////////////////////////////////////////////////////
 
-  void openEdit(dynamic product) {
+  void openEdit(dynamic places) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => EditProductPage(product: product),
+        builder: (_) => EditplacesPage(places: places),
       ),
-    ).then((value) => fetchProducts());
+    ).then((value) => fetchplaces());
   }
 
   ////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ class _ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Product List')),
+      appBar: AppBar(title: const Text('Places List')),
 
       body: Column(
         children: [
@@ -170,10 +170,10 @@ class _ProductListState extends State<ProductList> {
             child: TextField(
               controller: searchController,
               decoration: const InputDecoration(
-                labelText: 'Search product',
+                labelText: 'Search Places',
                 prefixIcon: Icon(Icons.search),
               ),
-              onChanged: filterProducts,
+              onChanged: filterplaces,
             ),
           ),
 
@@ -182,16 +182,16 @@ class _ProductListState extends State<ProductList> {
           //////////////////////////////////////////////////////
 
           Expanded(
-            child: filteredProducts.isEmpty
+            child: filteredplaces.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                    padding: const EdgeInsets.only(bottom: 80), // ✅ สำคัญมาก
-                    itemCount: filteredProducts.length,
+                    itemCount: filteredplaces.length,
                     itemBuilder: (context, index) {
-                      final product = filteredProducts[index];
+                      final places = filteredplaces[index];
 
                       String imageUrl =
-                          "${baseUrl}images/${product['image']}";
+                          "${baseUrl}images/${places['image']}";
 
                       return Card(
                         child: ListTile(
@@ -215,14 +215,14 @@ class _ProductListState extends State<ProductList> {
                           // 🏷 NAME
                           //////////////////////////////////////////////////
 
-                          title: Text(product['name'] ?? 'No Name'),
+                          title: Text(places['name'] ?? 'No Name'),
 
                           //////////////////////////////////////////////////
                           // 📝 DESC
                           //////////////////////////////////////////////////
 
                           subtitle:
-                              Text(product['description'] ?? ''),
+                              Text(places['province'] ?? ''),
 
                           //////////////////////////////////////////////////
                           // 💰 PRICE
@@ -231,9 +231,9 @@ class _ProductListState extends State<ProductList> {
                           trailing: PopupMenuButton<String>(
                             onSelected: (value) {
                               if (value == 'edit') {
-                                openEdit(product);
+                                openEdit(places);
                               } else if (value == 'delete') {
-                                confirmDelete(product);
+                                confirmDelete(places);
                               }
                             },
                             itemBuilder: (_) => const [
@@ -257,7 +257,7 @@ class _ProductListState extends State<ProductList> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) =>
-                                    ProductDetail(product: product),
+                                    placesDetail(places: places),
                               ),
                             );
                           },
@@ -279,9 +279,9 @@ class _ProductListState extends State<ProductList> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const AddProductPage(),
+              builder: (_) => const AddplacesPage(),
             ),
-          ).then((value) => fetchProducts());
+          ).then((value) => fetchplaces());
         },
       ),
     );
@@ -289,22 +289,22 @@ class _ProductListState extends State<ProductList> {
 }
 
 //////////////////////////////////////////////////////////////
-// ✅ PRODUCT DETAIL PAGE
+// ✅ places DETAIL PAGE
 //////////////////////////////////////////////////////////////
 
-class ProductDetail extends StatelessWidget {
-  final dynamic product;
+class placesDetail extends StatelessWidget {
+  final dynamic places;
 
-  const ProductDetail({super.key, required this.product});
+  const placesDetail({super.key, required this.places});
 
   @override
   Widget build(BuildContext context) {
     String imageUrl =
-        "${baseUrl}images/${product['image']}";
+        "${baseUrl}images/${places['image']}";
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(product['name'] ?? 'Detail'),
+        title: Text(places['name'] ?? 'Detail'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -333,7 +333,7 @@ class ProductDetail extends StatelessWidget {
             //////////////////////////////////////////////////////
 
             Text(
-              product['name'] ?? '',
+              places['name'] ?? '',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -343,10 +343,10 @@ class ProductDetail extends StatelessWidget {
             const SizedBox(height: 10),
 
             //////////////////////////////////////////////////////
-            // 📝 DESC
+            // 📝 ADDRESS
             //////////////////////////////////////////////////////
 
-            Text(product['description'] ?? ''),
+            Text(places['province'] ?? ''),
 
             const SizedBox(height: 10),
 
@@ -355,7 +355,7 @@ class ProductDetail extends StatelessWidget {
             //////////////////////////////////////////////////////
 
             Text(
-              'ราคา: ฿${product['price']}',
+              'address: ${places['address']}',
               style: const TextStyle(fontSize: 18),
             ),
           ],

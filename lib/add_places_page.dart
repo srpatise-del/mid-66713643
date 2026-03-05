@@ -5,21 +5,22 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
-class AddProductPage extends StatefulWidget {
-  const AddProductPage({super.key});
+class AddplacesPage extends StatefulWidget {
+  const AddplacesPage({super.key});
 
   @override
-  State<AddProductPage> createState() => _AddProductPageState();
+  State<AddplacesPage> createState() => _AddplacesPageState();
 }
 
-class _AddProductPageState extends State<AddProductPage> {
+class _AddplacesPageState extends State<AddplacesPage> {
 
   ////////////////////////////////////////////////////////////
   // ✅ Controllers
   ////////////////////////////////////////////////////////////
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController provinceController = TextEditingController();
   final TextEditingController descController = TextEditingController();
 
   ////////////////////////////////////////////////////////////
@@ -43,10 +44,10 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   ////////////////////////////////////////////////////////////
-  // ✅ Save Product + Upload Image
+  // ✅ Save places + Upload Image
   ////////////////////////////////////////////////////////////
 
-  Future<void> saveProduct() async {
+  Future<void> saveplaces() async {
 
     if (selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,7 +57,7 @@ class _AddProductPageState extends State<AddProductPage> {
     }
 
     final url = Uri.parse(
-      "http://localhost/flutter_product6/php_api/insert_product.php",
+      "http://localhost/mid-66713643/php_api/insert_places.php",
     );
 
     var request = http.MultipartRequest('POST', url);
@@ -66,7 +67,8 @@ class _AddProductPageState extends State<AddProductPage> {
     ////////////////////////////////////////////////////////////
 
     request.fields['name'] = nameController.text;
-    request.fields['price'] = priceController.text;
+    request.fields['address'] = addressController.text;
+    request.fields['province'] = provinceController.text;
     request.fields['description'] = descController.text;
 
     ////////////////////////////////////////////////////////////
@@ -107,7 +109,7 @@ class _AddProductPageState extends State<AddProductPage> {
     if (data["success"] == true) {
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("เพิ่มสินค้าเรียบร้อย")),
+        const SnackBar(content: Text("เพิ่มสถานที่ท่องเที่ยวเรียบร้อย")),
       );
 
       Navigator.pop(context, true);
@@ -127,7 +129,7 @@ class _AddProductPageState extends State<AddProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("เพิ่มสินค้า")),
+      appBar: AppBar(title: const Text("เพิ่มสถานที่ท่องเที่ยว")),
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -173,7 +175,7 @@ class _AddProductPageState extends State<AddProductPage> {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                  labelText: "ชื่อสินค้า",
+                  labelText: "ชื่อสถานที่ท่องเที่ยว",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -185,10 +187,24 @@ class _AddProductPageState extends State<AddProductPage> {
               ////////////////////////////////////////////////////////////
 
               TextField(
-                controller: priceController,
+                controller: addressController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: "ราคา",
+                  labelText: "ที่อยู่",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+              ////////////////////////////////////////////////////////////
+              // 💰 Price
+              ////////////////////////////////////////////////////////////
+
+              TextField(
+                controller: provinceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: "จังหวัด",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -208,7 +224,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
 
               ////////////////////////////////////////////////////////////
               // ✅ Button
@@ -217,8 +233,8 @@ class _AddProductPageState extends State<AddProductPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: saveProduct,
-                  child: const Text("บันทึกสินค้า"),
+                  onPressed: saveplaces,
+                  child: const Text("บันทึกสถานที่ท่องเที่ยว"),
                 ),
               ),
             ],

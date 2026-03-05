@@ -16,7 +16,8 @@ try {
 
     $id = $_POST['id'];
     $name = $_POST['name'];
-    $price = $_POST['price'];
+    $address = $_POST['address'];
+    $province = $_POST['province'];
     $description = $_POST['description'];
     $oldImage = $_POST['old_image'];
 
@@ -43,9 +44,10 @@ try {
         }
     }
 
-    $sql = "UPDATE products 
+    $sql = "UPDATE places 
             SET name = :name,
-                price = :price,
+                address = :address,
+                province = :province,
                 description = :description,
                 image = :image
             WHERE id = :id";
@@ -54,7 +56,8 @@ try {
 
     $stmt->bindParam(':id', $id);
     $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':price', $price);
+    $stmt->bindParam(':address', $address);
+    $stmt->bindParam(':province', $province);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':image', $imageName);
 

@@ -6,21 +6,22 @@ import 'package:flutter/foundation.dart';
 import 'dart:io';
 
 const String baseUrl =
-    "http://127.0.0.1/flutter_product6/php_api/";
+    "http://127.0.0.1/mid-66713643/php_api/";
 
-class EditProductPage extends StatefulWidget {
-  final dynamic product;
+class EditplacesPage extends StatefulWidget {
+  final dynamic places;
 
-  const EditProductPage({super.key, required this.product});
+  const EditplacesPage({super.key, required this.places});
 
   @override
-  State<EditProductPage> createState() => _EditProductPageState();
+  State<EditplacesPage> createState() => _EditplacesPageState();
 }
 
-class _EditProductPageState extends State<EditProductPage> {
+class _EditplacesPageState extends State<EditplacesPage> {
 
   late TextEditingController nameController;
-  late TextEditingController priceController;
+  late TextEditingController addressController;
+  late TextEditingController provinceController;
   late TextEditingController descController;
 
   XFile? selectedImage;
@@ -30,13 +31,16 @@ class _EditProductPageState extends State<EditProductPage> {
     super.initState();
 
     nameController =
-        TextEditingController(text: widget.product['name']);
+        TextEditingController(text: widget.places['name']);
 
-    priceController =
-        TextEditingController(text: widget.product['price']);
+    addressController =
+        TextEditingController(text: widget.places['address']);
+
+    provinceController =
+        TextEditingController(text: widget.places['province']);
 
     descController =
-        TextEditingController(text: widget.product['description']);
+        TextEditingController(text: widget.places['description']);
   }
 
   ////////////////////////////////////////////////////////////
@@ -57,26 +61,27 @@ class _EditProductPageState extends State<EditProductPage> {
   }
 
   ////////////////////////////////////////////////////////////
-  // ✅ UPDATE PRODUCT + IMAGE
+  // ✅ UPDATE places + IMAGE
   ////////////////////////////////////////////////////////////
 
-  Future<void> updateProduct() async {
+  Future<void> updateplaces() async {
     try {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse("${baseUrl}update_product_with_image.php"),
+        Uri.parse("${baseUrl}update_places_with_image.php"),
       );
 
       ////////////////////////////////////////////////////////
       // ✅ Fields
       ////////////////////////////////////////////////////////
 
-      request.fields['id'] = widget.product['id'].toString();
+      request.fields['id'] = widget.places['id'].toString();
       request.fields['name'] = nameController.text;
-      request.fields['price'] = priceController.text;
+      request.fields['address'] = addressController.text;
+      request.fields['province'] = provinceController.text;
       request.fields['description'] = descController.text;
-      request.fields['old_image'] = widget.product['image'];
+      request.fields['old_image'] = widget.places['image'];
 
       ////////////////////////////////////////////////////////
       // ✅ Image (ถ้ามี)
@@ -138,10 +143,10 @@ class _EditProductPageState extends State<EditProductPage> {
   Widget build(BuildContext context) {
 
     String imageUrl =
-        "${baseUrl}images/${widget.product['image']}";
+        "${baseUrl}images/${widget.places['image']}";
 
     return Scaffold(
-      appBar: AppBar(title: const Text("แก้ไขสินค้า")),
+      appBar: AppBar(title: const Text("แก้ไขสถานที่ท่องเที่ยว")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
 
@@ -184,16 +189,22 @@ class _EditProductPageState extends State<EditProductPage> {
 
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: "ชื่อสินค้า"),
+                decoration: const InputDecoration(labelText: "ชื่อสถานที่ท่องเที่ยว"),
               ),
 
               const SizedBox(height: 10),
 
               TextField(
-                controller: priceController,
-                decoration: const InputDecoration(labelText: "ราคา"),
+                controller: addressController,
+                decoration: const InputDecoration(labelText: "ที่อยู่"),
               ),
 
+              const SizedBox(height: 10),
+
+              TextField(
+                controller: provinceController,
+                decoration: const InputDecoration(labelText: "จังหวัด"),
+              ),
               const SizedBox(height: 10),
 
               TextField(
@@ -206,8 +217,8 @@ class _EditProductPageState extends State<EditProductPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: updateProduct,
-                  child: const Text("บันทึก"),
+                  onPressed: updateplaces,
+                  child: const Text("บันทึกสถานที่ท่องเที่ยว"),
                 ),
               )
             ],
